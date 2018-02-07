@@ -5,6 +5,7 @@ import com.cg.cm.organize.service.ZCMT6001Service;
 import com.demo.cm.utils.BaseResponse;
 import com.demo.cm.utils.CMException;
 import com.google.common.base.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Calendar;
@@ -18,12 +19,12 @@ import java.util.List;
 
 @RestController
 public class ZCMT6001Controller {
-
+    @Autowired
     private ZCMT6001Service service;
     private BaseResponse resp;
 
     /**
-     * 增加部门
+     * 增加部门（不用）
      */
     @RequestMapping(value = "/department/addbdepart" ,method = RequestMethod.POST)
     public String addDdepart(@RequestBody ZCMT6001 zcmt6001){
@@ -45,7 +46,7 @@ public class ZCMT6001Controller {
         }
     }
     /**
-     * 修改部门信息
+     * 修改部门信息（不用）
      */
     @RequestMapping(value = "/department/updatedepartment" ,method = RequestMethod.POST)
     public String updateDepartment(@RequestBody ZCMT6001 zcmt6001){
@@ -70,7 +71,7 @@ public class ZCMT6001Controller {
         }
     }
     /**
-     * 保存公司
+     * 保存部门数据
      */
     @RequestMapping(value = "/department/savedepartment" ,method = RequestMethod.POST)
     public String saveDepartment(@RequestBody ZCMT6001 zcmt6001){
@@ -78,14 +79,11 @@ public class ZCMT6001Controller {
         if(Strings.isNullOrEmpty(zcmt6001.getBukrs())){
             return resp.setStatecode(BaseResponse.ERROR).setMsg("公司代码不能为空！").toJSON();
         }
-        if(Strings.isNullOrEmpty(zcmt6001.getDpnum())){
-            return resp.setStatecode(BaseResponse.ERROR).setMsg("部门代码不能为空！").toJSON();
-        }
         try{
-            ZCMT6001 old = service.getDPNUM(zcmt6001.getBukrs());
-            if( old == null){
+            if(Strings.isNullOrEmpty(zcmt6001.getDpnum())){
                 zcmt6001.setCreateDate(Calendar.getInstance().getTime());
             }else{
+                ZCMT6001 old = service.getDPNUM(zcmt6001.getDpnum());
                 zcmt6001.setCreateDate(old.getCreateDate());
                 zcmt6001.setUpdateDate(Calendar.getInstance().getTime());
             }
@@ -95,7 +93,7 @@ public class ZCMT6001Controller {
         }
     }
     /**
-     * 删除公司
+     * 删除部门
      */
     @RequestMapping(value = "/department/deldepartment" ,method = RequestMethod.POST)
     public String deldePartment(@RequestBody ZCMT6001 dpnum){

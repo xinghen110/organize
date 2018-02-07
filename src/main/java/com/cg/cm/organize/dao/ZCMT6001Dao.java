@@ -3,6 +3,7 @@ package com.cg.cm.organize.dao;
 import com.cg.cm.organize.entity.ZCMT6001;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -29,5 +30,9 @@ public interface ZCMT6001Dao extends CrudRepository<ZCMT6001, Long> {
      * 保存部门数据
      * */
     ZCMT6001 save(ZCMT6001 f);
-
+    /**
+     * 获取部门编号最大值
+     * */
+    @Query("select max(a.dpnum) from ZCMT6001 a where a.dpnum like ?1% order by dpnum desc")
+    String getMaxDpnum(String bukrs);
 }

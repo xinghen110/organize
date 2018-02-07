@@ -22,6 +22,7 @@ public class OrganizeApplication {
 				return clazzName.substring(0, clazzName.lastIndexOf('$'));
 			}
 		}.getClassName();
+		//写pid文件
 		ApplicationUtils.writePID(clazzName.substring(clazzName.lastIndexOf(".")+1,clazzName.length()));
 	}
 }
