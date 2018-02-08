@@ -1,5 +1,6 @@
 package com.cg.cm.organize.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cg.cm.organize.entity.ZCMT6000;
 import com.cg.cm.organize.service.ZCMT6000Service;
@@ -29,7 +30,7 @@ public class ZCMT6000Controller {
     private BaseResponse resp;
 
     /**
-     * 增加公司
+     * 增加公司（未启用）
      */
     @RequestMapping(value = "/business/addbusiness" ,method = RequestMethod.POST)
     public String addBusiness(@RequestBody ZCMT6000 zcmt6000){
@@ -48,7 +49,7 @@ public class ZCMT6000Controller {
         }
     }
     /**
-     * 修改公司
+     * 修改公司（未启用）
      */
     @RequestMapping(value = "/business/updatebusiness" ,method = RequestMethod.POST)
     public String updateBusiness(@RequestBody ZCMT6000 zcmt6000){
@@ -141,15 +142,16 @@ public class ZCMT6000Controller {
      * 获取子公司列表分页
      */
     @RequestMapping(value = "/business/page_sub_business" ,method = RequestMethod.POST)
-    public String pageBusiness(@RequestParam("page") int page,
-                               @RequestParam("size") int size,
-                               @RequestParam("bukrs") String bukrs){
+    public String pageBusiness(@RequestBody String req){
         resp = new BaseResponse();
+        JSONObject jsonObject = JSON.parseObject(req);
         try{
+            String bukrs = jsonObject.getString("bukrs");
             if(bukrs == null){
                 bukrs = "";
             }
-            Page<ZCMT6000> list = service.getAllChild(bukrs, new PageRequest(page,size));
+            Page<ZCMT6000> list = service.getAllChild(bukrs,
+                    new PageRequest(jsonObject.getIntValue("page"),jsonObject.getIntValue("size")));
             if( list== null){
                 return resp.setStatecode(BaseResponse.ERROR).setMsg("公司为空！").toJSON();
             }

@@ -12,7 +12,7 @@ public interface ZCMT6001Dao extends CrudRepository<ZCMT6001, Long> {
     /**
      * 分页查找所有部门
      * */
-    Page<ZCMT6001> findAllByBukrsOrderBySequeAsc(String bukrs , Pageable pageable);
+    Page<ZCMT6001> findAllByBukrs(String bukrs , Pageable pageable);
 
     /**
      * 获取所有部门（不分页）

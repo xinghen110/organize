@@ -25,7 +25,7 @@ public interface ZCMT6001Service {
     /**
      * 分页显示公司下所有部门
      * */
-    Page<ZCMT6001> getAll(String bukrs, Pageable pageable) throws CMException;
+    Page<ZCMT6001> pageAll(String bukrs, Pageable pageable) throws CMException;
     /**
      * 显示公司下所有部门（不分页）
      * */

@@ -1,11 +1,15 @@
 package com.cg.cm.organize.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cg.cm.organize.entity.ZCMT6001;
 import com.cg.cm.organize.service.ZCMT6001Service;
 import com.demo.cm.utils.BaseResponse;
 import com.demo.cm.utils.CMException;
 import com.google.common.base.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Calendar;
@@ -143,9 +147,28 @@ public class ZCMT6001Controller {
     }
 
     /**
+     * 获取子公司列表分页
+     */
+    @RequestMapping(value = "/department/pagedepartment" ,method = RequestMethod.POST)
+    public String pageBusiness(@RequestBody String req){
+        resp = new BaseResponse();
+        JSONObject jsonObject = JSON.parseObject(req);
+        if(Strings.isNullOrEmpty(jsonObject.getString("bukrs"))){
+            return resp.setStatecode(BaseResponse.ERROR).setMsg("公司代码不能为空！").toJSON();
+        }
+        try{
+            Page<ZCMT6001> list = service.pageAll(jsonObject.getString("bukrs"),
+                    new PageRequest(jsonObject.getIntValue("page"),jsonObject.getIntValue("size")));
+            return resp.setStatecode(BaseResponse.SUCCESS).setData(list).toJSON();
+        }catch (CMException e){
+            return resp.setStatecode(BaseResponse.ERROR).setMsg(e.getMsg()).toJSON();
+        }
+    }
+
+    /**
      * 获取单个部门
      */
-    @RequestMapping(value = "/department/getDepartment" ,method = RequestMethod.POST)
+    @RequestMapping(value = "/department/getdepartment" ,method = RequestMethod.POST)
     public String getBusiness(@RequestBody ZCMT6001 dpnum){
         resp = new BaseResponse();
         if(Strings.isNullOrEmpty(dpnum.getDpnum())){

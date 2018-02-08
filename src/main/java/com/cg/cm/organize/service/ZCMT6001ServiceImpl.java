@@ -45,7 +45,7 @@ public class ZCMT6001ServiceImpl implements ZCMT6001Service {
                 if(Strings.isNullOrEmpty(maxDpnum)){
                     maxDpnum = zcmt6001.getBukrs()+"0000";
                 }
-                int max = Integer.parseInt(maxDpnum.substring(4,7))+1;
+                int max = Integer.parseInt(maxDpnum.substring(4,8))+1;
                 String dpnum = zcmt6001.getBukrs()+Strings.padStart(Integer.toString(max),4, '0');
                 logger.info("公司代码{}当前最大的编号为{}，生成新部门的编号为{}。", zcmt6001.getBukrs(), maxDpnum, dpnum);
                 zcmt6001.setDpnum(dpnum);
@@ -80,10 +80,10 @@ public class ZCMT6001ServiceImpl implements ZCMT6001Service {
      * @param pageable  分页参数
      */
     @Override
-    public Page<ZCMT6001> getAll(String bukrs, Pageable pageable) throws CMException {
+    public Page<ZCMT6001> pageAll(String bukrs, Pageable pageable) throws CMException {
         zcmt6000Service.checkBukrsIsNull(bukrs);
         try{
-            Page<ZCMT6001> page =  dao.findAllByBukrsOrderBySequeAsc(bukrs, pageable);
+            Page<ZCMT6001> page =  dao.findAllByBukrs(bukrs, pageable);
             logger.info("部门列表：{}", JSON.toJSONString(page));
             return page;
         }catch (Exception e){
