@@ -6,28 +6,36 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
- * Created by hexin on 2018/2/6.
+ * Created by hexin on 2018/2/8.
  *
- * 合同管理系统-部门及其属性
+ * 合同管理系统-岗位及其属性
  *
  */
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ZCMT6001 extends BaseEntity implements Serializable {
-    private final String type = "depart";
-    private static final long serialVersionUID = 1L;
+public class ZCMT6002 extends BaseEntity implements Serializable {
 
+    private final String type = "gangwei";
+
+    private static final long serialVersionUID = 1L;
+    /**
+     * 岗位代码
+     * */
+    @Id
+    @Column(nullable = false, length = 12, unique = true, name = "GWNUM")
+    private String gwnum;
     /**
      * 部门代码
      * */
-    @Id
-    @Column(nullable = false, length = 8, unique = true, name = "DPNUM")
+    @Column(nullable = false, length = 8, name = "DPNUM")
     private String dpnum;
     /**
      * 公司代码
@@ -42,16 +50,16 @@ public class ZCMT6001 extends BaseEntity implements Serializable {
     private int seque;
 
     /**
-     * 部门名称
+     * 岗位名称
      * */
-    @Column(length = 25, name = "DPNAM")
-    private String dpnam;
+    @Column(length = 25, name = "GWNAM")
+    private String gwnam;
 
     /**
-     * 部门描述
+     * 岗位描述
      * */
-    @Column(length = 40, name = "DPTXT")
-    private String dptxt;
+    @Column(length = 40, name = "GWTXT")
+    private String gwtxt;
 
 
     public String toJson(){
@@ -82,20 +90,28 @@ public class ZCMT6001 extends BaseEntity implements Serializable {
         this.seque = seque;
     }
 
-    public String getDpnam() {
-        return dpnam;
+    public String getGwnum() {
+        return gwnum;
     }
 
-    public void setDpnam(String dpnam) {
-        this.dpnam = dpnam;
+    public void setGwnum(String gwnum) {
+        this.gwnum = gwnum;
     }
 
-    public String getDptxt() {
-        return dptxt;
+    public String getGwnam() {
+        return gwnam;
     }
 
-    public void setDptxt(String dptxt) {
-        this.dptxt = dptxt;
+    public void setGwnam(String gwnam) {
+        this.gwnam = gwnam;
+    }
+
+    public String getGwtxt() {
+        return gwtxt;
+    }
+
+    public void setGwtxt(String gwtxt) {
+        this.gwtxt = gwtxt;
     }
 
     public String getType() {

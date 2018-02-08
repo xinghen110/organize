@@ -17,15 +17,15 @@ public interface ZCMT6001Dao extends CrudRepository<ZCMT6001, Long> {
     /**
      * 获取所有部门（不分页）
      * */
-    List<ZCMT6001> findAllByBukrsOrderBySequeAsc(String bukrs);
+    List<ZCMT6001> findAllByBukrs(String bukrs);
     /**
      * 根据部门代码返回部门
      * */
     ZCMT6001 findByDpnum(String dpnum);
     /**
-     * 根据部门名称查找部门
+     * 根据公司代码、部门名称查找部门
      * */
-    List<ZCMT6001> findAllByDpnamContainingIgnoringCase(String dpnam);
+    List<ZCMT6001> findAllByBukrsAndDpnamContainingIgnoringCase(String bukrs, String dpnam);
     /**
      * 保存部门数据
      * */
@@ -33,6 +33,6 @@ public interface ZCMT6001Dao extends CrudRepository<ZCMT6001, Long> {
     /**
      * 获取部门编号最大值
      * */
-    @Query("select max(a.dpnum) from ZCMT6001 a where a.dpnum like ?1% order by dpnum desc")
+    @Query("select max(a.dpnum) from ZCMT6001 a where a.dpnum like ?1%")
     String getMaxDpnum(String bukrs);
 }

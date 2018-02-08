@@ -24,6 +24,7 @@ import java.io.Serializable;
 @ToString
 public class ZCMT6000 extends BaseEntity implements Serializable {
 
+    private final String type = "bukrs";
     private static final long serialVersionUID = 1L;
 
     /**
@@ -100,5 +101,9 @@ public class ZCMT6000 extends BaseEntity implements Serializable {
 
     public void setButxt(String butxt) {
         this.butxt = butxt;
+    }
+
+    public String getType() {
+        return type;
     }
 }

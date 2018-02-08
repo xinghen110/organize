@@ -37,9 +37,13 @@ public interface ZCMT6001Service {
     /**
      * 根据部门名称查询部门
      * */
-    List<ZCMT6001> getDPNAM(String dpnam) throws CMException;
+    List<ZCMT6001> getDPNAM(String bukrs, String dpnam) throws CMException;
     /**
      * 检查部门代码是否为空
      */
     void checkDpnumIsNull(String dpnum) throws CMException;
+    /**
+     * 检查外键是否存在
+     */
+    void checkForeignExist(String dpnum) throws CMException;
 }

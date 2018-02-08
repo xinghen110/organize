@@ -3,15 +3,19 @@ package com.cg.cm.organize.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cg.cm.organize.entity.ZCMT6000;
+import com.cg.cm.organize.entity.ZCMT6001;
+import com.cg.cm.organize.entity.ZCMT6002;
 import com.cg.cm.organize.service.ZCMT6000Service;
+import com.cg.cm.organize.service.ZCMT6001Service;
+import com.cg.cm.organize.service.ZCMT6002Service;
 import com.demo.cm.utils.BaseResponse;
 import com.demo.cm.utils.CMException;
 import com.google.common.base.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -24,8 +28,9 @@ import java.util.List;
 @RestController
 public class ZCMT6000Controller {
 
-    @Autowired
     private ZCMT6000Service service;
+    private ZCMT6001Service zcmt6001Service;
+    private ZCMT6002Service zcmt6002Service;
 
     private BaseResponse resp;
 
@@ -106,9 +111,15 @@ public class ZCMT6000Controller {
             if( zcmt6000== null){
                 return resp.setStatecode(BaseResponse.ERROR).setMsg("公司代码不存在！").toJSON();
             }
-            int size = service.getChild(bukrs.getBukrs()).size();
-            if(size>0){
-                return resp.setStatecode(BaseResponse.ERROR).setMsg("该公司有个"+size+"子公司，不可删除！").toJSON();
+            //如果公司有子公司，则不允许删除
+            List<ZCMT6000> child = service.getChild(bukrs.getBukrs());
+            if( child != null && child.size() > 0){
+                return resp.setStatecode(BaseResponse.ERROR).setMsg("该公司有个"+child.size()+"子公司，不可删除！").toJSON();
+            }
+            //如果公司有部门，则不允许删除
+            List<ZCMT6001> zcmt6001 = zcmt6001Service.getAll(bukrs.getBukrs());
+            if( zcmt6001 != null && zcmt6001.size() > 0){
+                return resp.setStatecode(BaseResponse.ERROR).setMsg("该公司有个"+zcmt6001.size()+"部门，不可删除！").toJSON();
             }
             service.deleteZCMT6000(zcmt6000);
             if(service.getBUKRS(bukrs.getBukrs()) == null){
@@ -130,7 +141,7 @@ public class ZCMT6000Controller {
         try{
             List<ZCMT6000> list = service.getAll();
             if( list== null){
-                return resp.setStatecode(BaseResponse.ERROR).setMsg("公司为空！").toJSON();
+                return resp.setStatecode(BaseResponse.EMPTY).setMsg("公司为空！").toJSON();
             }
             return resp.setStatecode(BaseResponse.SUCCESS).setData(list).toJSON();
         }catch (CMException e){
@@ -153,7 +164,7 @@ public class ZCMT6000Controller {
             Page<ZCMT6000> list = service.getAllChild(bukrs,
                     new PageRequest(jsonObject.getIntValue("page"),jsonObject.getIntValue("size")));
             if( list== null){
-                return resp.setStatecode(BaseResponse.ERROR).setMsg("公司为空！").toJSON();
+                return resp.setStatecode(BaseResponse.EMPTY).setMsg("公司为空！").toJSON();
             }
             return resp.setStatecode(BaseResponse.SUCCESS).setData(list).toJSON();
         }catch (CMException e){
@@ -179,5 +190,34 @@ public class ZCMT6000Controller {
         }catch (CMException e){
             return resp.setStatecode(BaseResponse.ERROR).setMsg(e.getMsg()).toJSON();
         }
+    }
+
+    /**
+     * 获取公司、部门、岗位、用户列表
+     */
+    @RequestMapping(value = "/organize/getlist" ,method = RequestMethod.POST)
+    public String getOrgList(@RequestBody ZCMT6000 bukrs){
+        resp = new BaseResponse();
+        if(Strings.isNullOrEmpty(bukrs.getBukrs())){
+            return resp.setStatecode(BaseResponse.ERROR).setMsg("公司代码不能为空！").toJSON();
+        }
+        ArrayList<Object> list = new ArrayList<>();
+        try{
+            ZCMT6000 bukrs1 = service.getBUKRS(bukrs.getBukrs());
+            List<ZCMT6001> list1 = zcmt6001Service.getAll(bukrs.getBukrs());
+            List<ZCMT6002> list2 = zcmt6002Service.getAllByBukrs(bukrs.getBukrs());
+            list.add(bukrs1);
+            list.addAll(list1);
+            list.addAll(list2);
+            return resp.setStatecode(BaseResponse.SUCCESS).setData(list).toJSON();
+        }catch (CMException e){
+            return resp.setStatecode(BaseResponse.ERROR).setMsg(e.getMsg()).toJSON();
+        }
+    }
+
+    public ZCMT6000Controller(ZCMT6000Service service, ZCMT6001Service zcmt6001Service, ZCMT6002Service zcmt6002Service) {
+        this.service = service;
+        this.zcmt6001Service = zcmt6001Service;
+        this.zcmt6002Service = zcmt6002Service;
     }
 }

@@ -100,7 +100,7 @@ public class ZCMT6001ServiceImpl implements ZCMT6001Service {
     public List<ZCMT6001> getAll(String bukrs) throws CMException {
         zcmt6000Service.checkBukrsIsNull(bukrs);
         try{
-            List<ZCMT6001> list =  dao.findAllByBukrsOrderBySequeAsc(bukrs);
+            List<ZCMT6001> list =  dao.findAllByBukrs(bukrs);
             logger.info("部门列表：{}", JSON.toJSONString(list));
             return list;
         }catch (Exception e){
@@ -128,13 +128,13 @@ public class ZCMT6001ServiceImpl implements ZCMT6001Service {
     /**
      * 根据部门名称查询部门
      *
+     * @param bukrs     公司名称
      * @param dpnam     部门名称
      */
     @Override
-    public List<ZCMT6001> getDPNAM(String dpnam) throws CMException {
-        checkDpnumIsNull(dpnam);
+    public List<ZCMT6001> getDPNAM(String bukrs, String dpnam) throws CMException {
         try {
-            List<ZCMT6001> list = dao.findAllByDpnamContainingIgnoringCase(dpnam);
+            List<ZCMT6001> list = dao.findAllByBukrsAndDpnamContainingIgnoringCase(bukrs, dpnam);
             logger.info("部门：{}", JSON.toJSONString(list));
             return list;
         } catch (Exception e) {
@@ -151,6 +151,20 @@ public class ZCMT6001ServiceImpl implements ZCMT6001Service {
     public void checkDpnumIsNull(String dpnum) throws CMException {
         if (Strings.isNullOrEmpty(dpnum)) {
             throw new CMException("部门代码不能为空！");
+        }
+    }
+
+    /**
+     * 检查外键是否存在
+     *
+     * @param dpnum 待检查数据
+     */
+    @Override
+    public void checkForeignExist(String dpnum) throws CMException {
+        if(!Strings.isNullOrEmpty(dpnum)){
+            if(this.getDPNUM(dpnum) == null){
+                throw new CMException("部门代码不存在！");
+            }
         }
     }
 
